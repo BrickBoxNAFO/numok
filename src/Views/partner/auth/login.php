@@ -1,8 +1,8 @@
 <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0B1F3A 0%, #132d4f 100%);">
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <!-- Brand Logo Text -->
+        <!-- Brand Logo Image -->
         <div style="margin-bottom: 8px;">
-            <span style="font-size: 28px; font-weight: 700; color: #2B3480; letter-spacing: -0.5px;">HomeSafe</span><span style="font-size: 28px; font-weight: 700; color: #E8703A; letter-spacing: -0.5px;">Education</span>
+            <img src="https://homesafeeducation.com/opengraph-image.png" alt="HomeSafeEducation" style="max-width: 280px; height: auto; margin: 0 auto; display: block;">
         </div>
         <!-- Affiliate Program Badge -->
         <div style="display: inline-block; background: #0EA5A0; color: white; padding: 6px 20px; border-radius: 50px; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">
