@@ -1,17 +1,20 @@
-<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-            <?php if (!empty($settings['custom_logo'])): ?>
-            <img src="/assets/uploads/<?= htmlspecialchars($settings['custom_logo']) ?>" alt="<?= htmlspecialchars($settings['custom_app_name'] ?? 'App') ?>" class="h-12 mx-auto max-w-64 object-contain" />
-        <?php else: ?>
-            <img src="/assets/images/numok-logo.png" alt="Numok" class="h-12 mx-auto" />
-        <?php endif; ?>
-        <h2 class="mt-2 text-center text-gray-400">
-            Create your partner account
+<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0B1F3A 0%, #132d4f 100%);">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <!-- Brand Logo Text -->
+        <div style="margin-bottom: 8px;">
+            <span style="font-size: 28px; font-weight: 700; color: #2B3480; letter-spacing: -0.5px;">HomeSafe</span><span style="font-size: 28px; font-weight: 700; color: #E8703A; letter-spacing: -0.5px;">Education</span>
+        </div>
+        <!-- Affiliate Program Badge -->
+        <div style="display: inline-block; background: #0EA5A0; color: white; padding: 6px 20px; border-radius: 50px; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">
+            Affiliate Program
+        </div>
+        <h2 class="mt-2 text-center" style="color: rgba(255,255,255,0.7); font-size: 16px;">
+            Join our affiliate program and earn 20% commission
         </h2>
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+    <div class="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10" style="border-top: 4px solid #0EA5A0;">
             <?php if (isset($_SESSION['register_error'])): ?>
             <div class="rounded-md bg-red-50 p-4 mb-6">
                 <div class="flex">
@@ -27,24 +30,25 @@
             </div>
             <?php unset($_SESSION['register_error']); endif; ?>
 
-            <form class="space-y-6" action="/auth/register" method="POST">
+            <form class="space-y-5" action="/auth/register" method="POST">
                 <div>
                     <label for="company_name" class="block text-sm font-medium text-gray-700">
-                        Company Name
+                        Company / Website Name
                     </label>
                     <div class="mt-1">
                         <input id="company_name" name="company_name" type="text" required autofocus
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                               placeholder="e.g. Your Blog or Business Name"
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm" onfocus="this.style.borderColor='#0EA5A0'; this.style.boxShadow='0 0 0 1px #0EA5A0';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
                     </div>
                 </div>
 
                 <div>
                     <label for="contact_name" class="block text-sm font-medium text-gray-700">
-                        Contact Name
+                        Your Full Name
                     </label>
                     <div class="mt-1">
                         <input id="contact_name" name="contact_name" type="text" required
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm" onfocus="this.style.borderColor='#0EA5A0'; this.style.boxShadow='0 0 0 1px #0EA5A0';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
                     </div>
                 </div>
 
@@ -54,7 +58,7 @@
                     </label>
                     <div class="mt-1">
                         <input id="email" name="email" type="email" autocomplete="email" required
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm" onfocus="this.style.borderColor='#0EA5A0'; this.style.boxShadow='0 0 0 1px #0EA5A0';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
                     </div>
                 </div>
 
@@ -64,23 +68,47 @@
                     </label>
                     <div class="mt-1">
                         <input id="password" name="password" type="password" required
-                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                               minlength="8">
+                               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm"
+                               minlength="8" onfocus="this.style.borderColor='#0EA5A0'; this.style.boxShadow='0 0 0 1px #0EA5A0';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
                     </div>
+                    <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
                 </div>
 
                 <div>
                     <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Create account
+                            class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: #0EA5A0;" onmouseover="this.style.backgroundColor='#0B8A86'" onmouseout="this.style.backgroundColor='#0EA5A0'">
+                        Create Affiliate Account
                     </button>
                 </div>
             </form>
         </div>
-        <p class="mt-8 text-center text-sm text-gray-600">
-            Already registered?
-            <a href="/login" class="font-medium text-indigo-600 hover:text-indigo-500">
-                Sign in to your account
+
+        <!-- Benefits -->
+        <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center;">
+            <div style="background: rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 22px; font-weight: 700; color: #0EA5A0;">20%</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">Commission</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 22px; font-weight: 700; color: #0EA5A0;">30</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">Day Cookies</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 22px; font-weight: 700; color: #0EA5A0;">Monthly</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">Payouts</div>
+            </div>
+        </div>
+
+        <p class="mt-6 text-center text-sm" style="color: rgba(255,255,255,0.6);">
+            Already have an affiliate account?
+            <a href="/login" style="color: #0EA5A0; font-weight: 600;" onmouseover="this.style.color='#E8703A'" onmouseout="this.style.color='#0EA5A0'">
+                Sign in
+            </a>
+        </p>
+
+        <p class="mt-4 text-center text-xs" style="color: rgba(255,255,255,0.3);">
+            <a href="https://homesafeeducation.com" style="color: rgba(255,255,255,0.3);" onmouseover="this.style.color='rgba(255,255,255,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
+                &larr; Back to HomeSafeEducation.com
             </a>
         </p>
     </div>
