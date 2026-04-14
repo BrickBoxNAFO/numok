@@ -17,6 +17,58 @@ require_once ROOT_PATH . '/vendor/autoload.php';
 // Load configuration
 require_once ROOT_PATH . '/config/config.php';
 
+// Determine route prefix from APP_URL (e.g., /affiliates)
+$appUrlPath = parse_url(getenv('APP_URL') ?: '', PHP_URL_PATH);
+define('ROUTE_PREFIX', rtrim($appUrlPath ?: '', '/'));
+
+// Load namespace-aware header() overrides for redirect prefixing
+require_once ROOT_PATH . '/src/helpers.php';
+
+// Output buffer to rewrite URLs in HTML when running under a prefix
+if (ROUTE_PREFIX !== '') {
+    ob_start(function(string $html): string {
+        $prefix = ROUTE_PREFIX;
+        // Rewrite href="/..." and action="/..." attributes to include prefix
+        $html = preg_replace_callback(
+            '/(?:href|action)="(\/[^"]*)"/',
+            function($m) use ($prefix) {
+                $path = $m[1];
+                // Skip if already prefixed
+                if (strpos($path, $prefix . '/') === 0 || $path === $prefix) {
+                    return $m[0];
+                }
+                return str_replace('"' . $path . '"', '"' . $prefix . $path . '"', $m[0]);
+            },
+            $html
+        );
+        // Rewrite fetch('/...') calls in inline scripts
+        $html = preg_replace_callback(
+            "/fetch\('(\/[^']*)/",
+            function($m) use ($prefix) {
+                $path = $m[1];
+                if (strpos($path, $prefix . '/') === 0) {
+                    return $m[0];
+                }
+                return "fetch('" . $prefix . $path;
+            },
+            $html
+        );
+        // Rewrite window.location.href='/...' in inline scripts
+        $html = preg_replace_callback(
+            "/window\.location\.href='(\/[^']*)/",
+            function($m) use ($prefix) {
+                $path = $m[1];
+                if (strpos($path, $prefix . '/') === 0) {
+                    return $m[0];
+                }
+                return "window.location.href='" . $prefix . $path;
+            },
+            $html
+        );
+        return $html;
+    });
+}
+
 // Get the path
 $path = $_SERVER['REQUEST_URI'];
 $path = parse_url($path, PHP_URL_PATH);
