@@ -1,8 +1,8 @@
 <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0B1F3A 0%, #132d4f 100%);">
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <!-- Brand Logo Text -->
+        <!-- Brand Logo Image -->
         <div style="margin-bottom: 8px;">
-            <span style="font-size: 28px; font-weight: 700; color: #2B3480; letter-spacing: -0.5px;">HomeSafe</span><span style="font-size: 28px; font-weight: 700; color: #E8703A; letter-spacing: -0.5px;">Education</span>
+            <img src="https://homesafeeducation.com/opengraph-image.png" alt="HomeSafeEducation" style="max-width: 280px; height: auto; margin: 0 auto; display: block;">
         </div>
         <!-- Affiliate Program Badge -->
         <div style="display: inline-block; background: #0EA5A0; color: white; padding: 6px 20px; border-radius: 50px; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">
@@ -33,10 +33,10 @@
             <form class="space-y-5" action="/auth/register" method="POST">
                 <div>
                     <label for="company_name" class="block text-sm font-medium text-gray-700">
-                        Company / Website Name
+                        Company / Website Name <span style="color: #9CA3AF; font-weight: 400;">(Optional)</span>
                     </label>
                     <div class="mt-1">
-                        <input id="company_name" name="company_name" type="text" required autofocus
+                        <input id="company_name" name="company_name" type="text" autofocus
                                placeholder="e.g. Your Blog or Business Name"
                                class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none sm:text-sm" onfocus="this.style.borderColor='#0EA5A0'; this.style.boxShadow='0 0 0 1px #0EA5A0';" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none';">
                     </div>
