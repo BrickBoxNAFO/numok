@@ -25,6 +25,7 @@ RUN apt-get update \
         netcat-openbsd \
     && docker-php-ext-install pdo pdo_mysql mbstring \
     && a2enmod rewrite headers \
+        && a2dismod mpm_event && a2enmod mpm_prefork \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Apache DocumentRoot to public/
