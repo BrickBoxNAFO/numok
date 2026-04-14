@@ -25,8 +25,7 @@ RUN apt-get update \
         netcat-openbsd \
     && docker-php-ext-install pdo pdo_mysql mbstring \
     && a2enmod rewrite headers \
-            && rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_event.conf \
-    && rm -rf /var/lib/apt/lists/*
+            && rm -rf /var/lib/apt/lists/*
 
 # Set Apache DocumentRoot to public/
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -61,6 +60,14 @@ RUN mkdir -p public/tracking \
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+
+# Fix Apache MPM conflict: ensure ONLY mpm_prefork is loaded
+RUN set -eux; \
+    a2dismod mpm_event 2>/dev/null || true; \
+        a2dismod mpm_worker 2>/dev/null || true; \
+            rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.*; \
+                a2enmod mpm_prefork; \
+                    apache2ctl configtest
 EXPOSE 80
 
 # Entry point prepares config then starts Apache in foreground
