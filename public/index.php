@@ -125,15 +125,27 @@ $routes = [
     'admin/partners/(\d+)/update' => ['PartnersController', 'update'],
     'admin/partners/(\d+)/delete' => ['PartnersController', 'delete'],
     'admin/partners/(\d+)/assign-program' => ['PartnersController', 'assignProgram'],
+    'admin/partners/(\d+)/suspend' => ['PartnersController', 'suspend'],
+    'admin/partners/(\d+)/reinstate' => ['PartnersController', 'reinstate'],
 
     // Conversions routes
     'admin/conversions' => ['ConversionsController', 'index'],
     'admin/conversions/update-status' => ['ConversionsController', 'updateStatus'],
     'admin/conversions/export' => ['ConversionsController', 'export'],
 
+    // Payouts routes
+    'admin/payouts' => ['PayoutController', 'index'],
+    'admin/payouts/(\d+)' => ['PayoutController', 'show'],
+    'admin/payouts/(\d+)/approve' => ['PayoutController', 'approve'],
+    'admin/payouts/(\d+)/mark-paid' => ['PayoutController', 'markPaid'],
+    'admin/payouts/(\d+)/hold' => ['PayoutController', 'hold'],
+    'admin/payouts/(\d+)/cancel' => ['PayoutController', 'cancel'],
+
     // API routes
+    'api/tracking/script/(\d+)' => ['TrackingController', 'script'],
     'api/tracking/config/(\d+)' => ['TrackingController', 'config'],
     'api/tracking/click' => ['TrackingController', 'click'],
+    'api/tracking/impression' => ['TrackingController', 'impression'],
 
     // Webhook routes
     'webhook/stripe' => ['WebhookController', 'stripeWebhook'],
