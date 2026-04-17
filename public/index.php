@@ -94,6 +94,9 @@ $routes = [
     'earnings' => ['PartnerEarningsController', 'index'],
     'programs' => ['PartnerProgramsController', 'index'],
     'programs/join' => ['PartnerProgramsController', 'join'],
+    'stripe/connect' => ['StripeConnectController', 'connect'],
+    'stripe/callback' => ['StripeConnectController', 'callback'],
+    'stripe/dashboard' => ['StripeConnectController', 'dashboard'],
 
     // Admin routes (under /admin)
     'admin' => ['DashboardController', 'index'],
@@ -129,9 +132,17 @@ $routes = [
     'admin/partners/(\d+)/reinstate' => ['PartnersController', 'reinstate'],
 
     // Conversions routes
+    //
+    // NOTE: the legacy POST /admin/conversions/update-status route has been
+    // removed intentionally. It let an admin flip a conversion to 'payable'
+    // or 'paid' without the 14-day cron gate. The only admin-facing writes
+    // are now reject (pending|payable -> rejected) and restore (rejected ->
+    // pending). Paid / payable transitions are owned exclusively by the
+    // approve-conversions and mark-paid payout flows.
     'admin/conversions' => ['ConversionsController', 'index'],
-    'admin/conversions/update-status' => ['ConversionsController', 'updateStatus'],
-    'admin/conversions/export' => ['ConversionsController', 'export'],
+    'admin/conversions/(\d+)/reject'  => ['ConversionsController', 'reject'],
+    'admin/conversions/(\d+)/restore' => ['ConversionsController', 'restore'],
+    'admin/conversions/export'        => ['ConversionsController', 'export'],
 
     // Payouts routes
     'admin/payouts' => ['PayoutController', 'index'],

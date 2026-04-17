@@ -144,31 +144,59 @@
 
                                 <!-- Tracking Link Section (for joined programs) -->
                                 <?php if ($program['status'] === 'joined'): ?>
-                                    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <h4 class="text-sm font-semibold text-gray-900 flex items-center">
-                                                <svg class="w-4 h-4 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
-                                                </svg>
-                                                Your Tracking Link
-                                            </h4>
-                                            <span class="text-xs text-gray-500 font-mono bg-white px-2 py-1 rounded border">
-                                                <?= htmlspecialchars($program['tracking_code']) ?>
-                                            </span>
+                                    <?php if (!empty($stripe_onboarded)): ?>
+                                        <!-- Stripe connected: show affiliate link -->
+                                        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <h4 class="text-sm font-semibold text-gray-900 flex items-center">
+                                                    <svg class="w-4 h-4 mr-2 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    Your Tracking Link
+                                                </h4>
+                                                <span class="text-xs text-gray-500 font-mono bg-white px-2 py-1 rounded border">
+                                                    <?= htmlspecialchars($program['tracking_code']) ?>
+                                                </span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <code class="flex-1 text-sm font-mono bg-white px-3 py-2 rounded border border-gray-200 text-gray-700 break-all">
+                                                    <?= htmlspecialchars($program['landing_page']) ?>?via=<?= htmlspecialchars($program['tracking_code']) ?>
+                                                </code>
+                                                <button onclick="copyToClipboard('<?= htmlspecialchars($program['landing_page']) ?>?via=<?= htmlspecialchars($program['tracking_code']) ?>')"
+                                                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    Copy
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="flex items-center gap-2">
-                                            <code class="flex-1 text-sm font-mono bg-white px-3 py-2 rounded border border-gray-200 text-gray-700 break-all">
-                                                <?= htmlspecialchars($program['landing_page']) ?>?via=<?= htmlspecialchars($program['tracking_code']) ?>
-                                            </code>
-                                            <button onclick="copyToClipboard('<?= htmlspecialchars($program['landing_page']) ?>?via=<?= htmlspecialchars($program['tracking_code']) ?>')"
-                                                class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                                </svg>
-                                                Copy
-                                            </button>
+                                    <?php else: ?>
+                                        <!-- Stripe NOT connected: show connect prompt instead of link -->
+                                        <div class="mb-6 p-4 rounded-lg border-2 border-dashed border-amber-300 bg-amber-50">
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0">
+                                                    <svg class="w-6 h-6 text-amber-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="ml-3 flex-1">
+                                                    <h4 class="text-sm font-semibold text-amber-800">Connect Your Payment Account</h4>
+                                                    <p class="mt-1 text-sm text-amber-700">To access your affiliate link, please connect your Stripe account first. This ensures we can pay your commissions directly and on time.</p>
+                                                    <a href="/stripe/connect"
+                                                       class="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white shadow-sm transition-colors"
+                                                       style="background-color: #635BFF;"
+                                                       onmouseover="this.style.backgroundColor='#4B45C6'"
+                                                       onmouseout="this.style.backgroundColor='#635BFF'">
+                                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/>
+                                                        </svg>
+                                                        Connect Stripe Account
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
 
                                 <!-- Action Buttons -->

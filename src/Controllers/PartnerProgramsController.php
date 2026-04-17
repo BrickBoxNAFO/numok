@@ -17,14 +17,14 @@ class PartnerProgramsController extends PartnerBaseController {
         // 1. Public (is_private = 0), OR
         // 2. Already assigned to this partner (joined)
         $programs = Database::query(
-            "SELECT p.*, 
-                    CASE 
+            "SELECT p.*,
+                    CASE
                         WHEN pp.id IS NOT NULL THEN 'joined'
                         ELSE 'available'
                     END as status,
                     pp.tracking_code
              FROM programs p
-             LEFT JOIN partner_programs pp ON p.id = pp.program_id 
+             LEFT JOIN partner_programs pp ON p.id = pp.program_id
                 AND pp.partner_id = ?
              WHERE p.status = 'active'
                AND (p.is_private = 0 OR pp.id IS NOT NULL)
@@ -32,10 +32,18 @@ class PartnerProgramsController extends PartnerBaseController {
             [$partnerId]
         )->fetchAll();
 
+        // Check if partner has completed Stripe onboarding
+        $partner = Database::query(
+            "SELECT stripe_onboarded FROM partners WHERE id = ?",
+            [$partnerId]
+        )->fetch();
+        $stripeOnboarded = $partner && !empty($partner['stripe_onboarded']);
+
         $settings = $this->getSettings();
         $this->view('partner/programs/index', [
             'title' => 'Available Programs - ' . ($settings['custom_app_name'] ?? 'Numok'),
-            'programs' => $programs
+            'programs' => $programs,
+            'stripe_onboarded' => $stripeOnboarded
         ]);
     }
 

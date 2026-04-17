@@ -126,10 +126,10 @@ class PartnerAuthController extends PartnerBaseController
         }
 
         // Validate required fields
-        $required = ['email', 'password', 'company_name', 'contact_name'];
+        $required = ['email', 'password', 'contact_name'];
         foreach ($required as $field) {
             if (empty($_POST[$field])) {
-                $_SESSION['register_error'] = 'All fields are required';
+                $_SESSION['register_error'] = 'Please fill in all required fields.';
                 header('Location: /register');
                 exit;
             }
@@ -173,11 +173,11 @@ class PartnerAuthController extends PartnerBaseController
 
         try {
             // Sanitize inputs
-            $companyName = strip_tags(trim($_POST['company_name']));
+            $companyName = strip_tags(trim($_POST['company_name'] ?? ''));
             $contactName = strip_tags(trim($_POST['contact_name']));
 
-            if (empty($companyName) || empty($contactName)) {
-                $_SESSION['register_error'] = 'Company name and contact name are required';
+            if (empty($contactName)) {
+                $_SESSION['register_error'] = 'Full name is required.';
                 header('Location: /register');
                 exit;
             }
