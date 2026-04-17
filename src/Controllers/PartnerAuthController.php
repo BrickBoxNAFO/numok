@@ -182,15 +182,44 @@ class PartnerAuthController extends PartnerBaseController
                 exit;
             }
 
-            // SECURITY: Set status to 'pending' - require admin approval
-            Database::insert('partners', [
+            // Auto-approve: set status to 'active' so partners can log in immediately
+            $partnerId = Database::insert('partners', [
                 'email' => $email,
                 'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
                 'company_name' => $companyName,
                 'contact_name' => $contactName,
                 'payment_email' => $email,
-                'status' => 'pending'
+                'status' => 'active'
             ]);
+
+            // Auto-assign to HomeSafe Education Affiliate Program (Program ID 1)
+            $defaultProgramId = 1;
+            $program = Database::query(
+                "SELECT id, terms FROM programs WHERE id = ? AND status = 'active'",
+                [$defaultProgramId]
+            )->fetch();
+
+            if ($program) {
+                $trackingCode = bin2hex(random_bytes(8));
+                $assignData = [
+                    'partner_id' => $partnerId,
+                    'program_id' => $defaultProgramId,
+                    'tracking_code' => $trackingCode,
+                    'status' => 'active'
+                ];
+
+                if (!empty($program['terms'])) {
+                    $assignData['terms_accepted'] = date('Y-m-d H:i:s');
+                    $assignData['terms_accepted_ip'] = $ip;
+                }
+
+                Database::insert('partner_programs', $assignData);
+                $this->logSecurityEvent('partner_auto_assigned', [
+                    'partner_id' => $partnerId,
+                    'program_id' => $defaultProgramId,
+                    'tracking_code' => $trackingCode
+                ]);
+            }
 
             // Log registration for fraud tracking
             $this->logSecurityEvent('partner_registered', [
@@ -198,6 +227,7 @@ class PartnerAuthController extends PartnerBaseController
                 'email' => $email,
                 'company' => $companyName,
                 'contact' => $contactName,
+                'partner_id' => $partnerId,
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? ''
             ]);
 
@@ -205,7 +235,7 @@ class PartnerAuthController extends PartnerBaseController
             $emailService = new \Numok\Services\EmailService();
             $emailService->sendWelcomeEmail($email, $contactName);
 
-            $_SESSION['register_success'] = 'Registration successful! Your account is pending approval.';
+            $_SESSION['register_success'] = 'Registration successful! You can now log in.';
             header('Location: /login');
         } catch (\Exception $e) {
             $_SESSION['register_error'] = 'Registration failed. Please try again.';
