@@ -90,7 +90,6 @@ $routes = [
     'settings/update' => ['PartnerProfileController', 'update'],
     'logout' => ['PartnerAuthController', 'logout'],
     'dashboard' => ['PartnerDashboardController', 'index'],
-    'tracking' => ['PartnerTrackingController', 'index'],
     'earnings' => ['PartnerEarningsController', 'index'],
     'programs' => ['PartnerProgramsController', 'index'],
     'programs/join' => ['PartnerProgramsController', 'join'],

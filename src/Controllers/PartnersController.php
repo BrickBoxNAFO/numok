@@ -12,25 +12,168 @@ class PartnersController extends Controller
         AuthMiddleware::handle();
     }
 
+    /**
+     * Affiliates tracking table.
+     *
+     * One row per partner, with lifecycle commission buckets (pending /
+     * approved (payable) / paid / refunded), click metrics, and 30-day
+     * risk signals. Supports status filter, free-text search (company /
+     * contact / email), and a few canonical sort orders.
+     *
+     * Everything is a single aggregated query so adding a few hundred
+     * partners won't fan out into N+1 lookups.
+     */
     public function index(): void
     {
+        $status = $_GET['status']  ?? 'all';
+        $search = trim((string)($_GET['q'] ?? ''));
+        $sort   = $_GET['sort']    ?? 'recent';
+
+        $allowedSort = [
+            'recent'      => 'p.created_at DESC',
+            'revenue'     => 'lifetime_revenue DESC',
+            'commission'  => 'lifetime_commission DESC',
+            'pending'     => 'pending_commission DESC',
+            'refunds'     => 'refunded_count DESC',
+            'risk'        => 'risk_score DESC',
+            'name'        => 'p.company_name ASC'
+        ];
+        $orderBy = $allowedSort[$sort] ?? $allowedSort['recent'];
+
+        $conditions = [];
+        $params     = [];
+
+        if ($status !== 'all') {
+            $conditions[] = 'p.status = ?';
+            $params[]     = $status;
+        }
+        if ($search !== '') {
+            $conditions[] = '(p.company_name LIKE ? OR p.contact_name LIKE ? OR p.email LIKE ?)';
+            $like         = '%' . $search . '%';
+            $params[]     = $like;
+            $params[]     = $like;
+            $params[]     = $like;
+        }
+        $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+        // Approval delay — surfaced so the UI can label the Pending bucket
+        // consistently with the cron ("inside the 14-day window").
+        $approvalDelayDays = (int)(Database::query(
+            "SELECT value FROM settings WHERE name = 'approval_delay_days' LIMIT 1"
+        )->fetch()['value'] ?? 14);
+        if ($approvalDelayDays < 1) {
+            $approvalDelayDays = 14;
+        }
+
+        // Per-partner aggregate. The CASE buckets mirror the conversion
+        // lifecycle: pending (new, inside the window), payable (approved,
+        // waiting on next payout batch), paid, refunded.
+        //
+        // 30-day risk score is a rough heuristic: vpn + datacenter clicks
+        // plus 3x any refunds in the window. Admin can click into the
+        // partner to see the full breakdown.
         $partners = Database::query(
-            "SELECT p.*,
-                    COUNT(DISTINCT pp.program_id) as total_programs,
-                    COUNT(DISTINCT c.id) as total_conversions,
-                    COALESCE(SUM(c.amount), 0) as total_revenue,
-                    COALESCE(SUM(c.commission_amount), 0) as total_commission
+            "SELECT
+                p.id,
+                p.company_name,
+                p.contact_name,
+                p.email,
+                p.payment_email,
+                p.payout_currency,
+                p.stripe_connect_id,
+                p.status,
+                p.suspended_reason,
+                p.suspended_at,
+                p.created_at,
+                COUNT(DISTINCT pp.id) AS program_count,
+
+                COUNT(DISTINCT c.id)                                              AS lifetime_conversions,
+                COALESCE(SUM(c.amount), 0)                                        AS lifetime_revenue,
+                COALESCE(SUM(c.commission_amount), 0)                             AS lifetime_commission,
+
+                COALESCE(SUM(CASE WHEN c.status = 'pending'
+                                  THEN c.commission_amount ELSE 0 END), 0)         AS pending_commission,
+                COUNT(CASE WHEN c.status = 'pending' THEN 1 END)                  AS pending_count,
+
+                COALESCE(SUM(CASE WHEN c.status = 'payable'
+                                  THEN c.commission_amount ELSE 0 END), 0)         AS approved_commission,
+                COUNT(CASE WHEN c.status = 'payable' THEN 1 END)                  AS approved_count,
+
+                COALESCE(SUM(CASE WHEN c.status = 'paid'
+                                  THEN c.commission_amount ELSE 0 END), 0)         AS paid_commission,
+                COUNT(CASE WHEN c.status = 'paid' THEN 1 END)                     AS paid_count,
+
+                COALESCE(SUM(CASE WHEN c.status = 'refunded'
+                                  THEN c.commission_amount ELSE 0 END), 0)         AS refunded_commission,
+                COUNT(CASE WHEN c.status = 'refunded' THEN 1 END)                 AS refunded_count,
+
+                COUNT(CASE WHEN c.status = 'rejected' THEN 1 END)                 AS rejected_count,
+
+                COUNT(DISTINCT CASE WHEN cl.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                    THEN cl.id END)                               AS clicks_30d,
+                COALESCE(SUM(CASE WHEN cl.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                  THEN cl.is_vpn ELSE 0 END), 0)                   AS vpn_clicks_30d,
+                COALESCE(SUM(CASE WHEN cl.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                  THEN cl.is_datacenter ELSE 0 END), 0)            AS dc_clicks_30d,
+                COUNT(DISTINCT CASE WHEN c.refunded_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                    THEN c.id END)                                AS refunds_30d,
+
+                (
+                    COALESCE(SUM(CASE WHEN cl.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                      THEN cl.is_vpn ELSE 0 END), 0)
+                  + COALESCE(SUM(CASE WHEN cl.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                      THEN cl.is_datacenter ELSE 0 END), 0)
+                  + 3 * COUNT(DISTINCT CASE WHEN c.refunded_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                                            THEN c.id END)
+                )                                                                 AS risk_score,
+
+                MAX(c.created_at)                                                 AS last_conversion_at,
+                MAX(cl.created_at)                                                AS last_click_at
              FROM partners p
-             LEFT JOIN partner_programs pp ON p.id = pp.partner_id
-             LEFT JOIN conversions c ON pp.id = c.partner_program_id
+             LEFT JOIN partner_programs pp ON pp.partner_id  = p.id
+             LEFT JOIN clicks cl           ON cl.partner_program_id = pp.id
+             LEFT JOIN conversions c       ON c.partner_program_id  = pp.id
+             {$where}
              GROUP BY p.id
-             ORDER BY p.created_at DESC"
+             ORDER BY {$orderBy}
+             LIMIT 500",
+            $params
         )->fetchAll();
+
+        // Header totals across the filtered set.
+        $totals = [
+            'partners'              => count($partners),
+            'active'                => 0,
+            'suspended'             => 0,
+            'pending_commission'    => 0.0,
+            'approved_commission'   => 0.0,
+            'paid_commission'       => 0.0,
+            'refunded_commission'   => 0.0,
+            'clicks_30d'            => 0,
+            'conversions_lifetime'  => 0,
+        ];
+        foreach ($partners as $p) {
+            if ($p['status'] === 'active')    { $totals['active']++; }
+            if ($p['status'] === 'suspended') { $totals['suspended']++; }
+            $totals['pending_commission']   += (float)$p['pending_commission'];
+            $totals['approved_commission']  += (float)$p['approved_commission'];
+            $totals['paid_commission']      += (float)$p['paid_commission'];
+            $totals['refunded_commission']  += (float)$p['refunded_commission'];
+            $totals['clicks_30d']           += (int)$p['clicks_30d'];
+            $totals['conversions_lifetime'] += (int)$p['lifetime_conversions'];
+        }
 
         $settings = $this->getSettings();
         $this->view('partners/index', [
-            'title' => 'Partners - ' . ($settings['custom_app_name'] ?? 'Numok'),
-            'partners' => $partners
+            'title'               => 'Affiliates - ' . ($settings['custom_app_name'] ?? 'Numok'),
+            'partners'            => $partners,
+            'totals'              => $totals,
+            'approval_delay_days' => $approvalDelayDays,
+            'filters'             => [
+                'status' => $status,
+                'q'      => $search,
+                'sort'   => $sort
+            ]
         ]);
     }
 
