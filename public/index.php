@@ -159,6 +159,10 @@ $routes = [
 
     // Webhook routes
     'webhook/stripe' => ['WebhookController', 'stripeWebhook'],
+
+    // Cron routes (triggered by external cron service, secured by CRON_SECRET)
+    'cron/approve-conversions' => ['CronController', 'approveConversions'],
+    'cron/build-payout-batches' => ['CronController', 'buildPayoutBatches'],
 ];
 
 // Check if route exists or matches a pattern
