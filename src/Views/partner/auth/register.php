@@ -1,8 +1,10 @@
 <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #0B1F3A 0%, #132d4f 100%);">
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <!-- Brand Logo Image -->
+        <!-- Brand Logo Text -->
         <div style="margin-bottom: 8px;">
-            <img src="https://homesafeeducation.com/opengraph-image.png" alt="HomeSafeEducation" style="max-width: 280px; height: auto; margin: 0 auto; display: block;">
+            <div style="font-size: 28px; font-weight: 700; color: white; font-family: Georgia, 'Times New Roman', serif; letter-spacing: -0.5px;">
+                <span style="color: #0EA5A0;">HomeSafe</span><span style="color: #E8703A;">Education</span>
+            </div>
         </div>
         <!-- Affiliate Program Badge -->
         <div style="display: inline-block; background: #0EA5A0; color: white; padding: 6px 20px; border-radius: 50px; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;">
@@ -90,8 +92,8 @@
                 <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">Commission</div>
             </div>
             <div style="background: rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 8px; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="font-size: 22px; font-weight: 700; color: #0EA5A0;">30</div>
-                <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">Day Cookies</div>
+                <div style="font-size: 22px; font-weight: 700; color: #0EA5A0;">Global</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px;">Reach</div>
             </div>
             <div style="background: rgba(255,255,255,0.08); border-radius: 8px; padding: 14px 8px; border: 1px solid rgba(255,255,255,0.1);">
                 <div style="font-size: 22px; font-weight: 700; color: #0EA5A0;">Monthly</div>
