@@ -38,19 +38,19 @@
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-white">Download Your Welcome Guide &amp; Product Training</h3>
+                        <h3 class="text-lg font-bold text-white">Your Welcome Guide &amp; Product Training</h3>
                         <p class="text-white/80 text-sm mt-0.5">
-                            Everything you need to understand, believe in, and share our products. Read this first!
+                            Everything you need: commission details, package breakdowns, recommendation scripts, and tips. Read this first!
                         </p>
                     </div>
                 </div>
-                <a href="https://homesafeeducation.com/affiliate-welcome-guide.docx"
-                   download
+                <a href="https://homesafeeducation.com/welcome-guide"
+                   target="_blank"
                    class="flex-shrink-0 inline-flex items-center gap-2 bg-white text-emerald-700 font-bold text-sm px-6 py-3 rounded-lg shadow-md hover:bg-emerald-50 transition-colors">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
-                    Download Guide
+                    Read the Welcome Guide
                 </a>
             </div>
         </div>
