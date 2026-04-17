@@ -27,6 +27,35 @@
         </div>
 
         <!-- =============================================================
+             WELCOME GUIDE DOWNLOAD — highly visible
+             ============================================================= -->
+        <div class="mt-8 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 shadow-lg">
+            <div class="px-6 py-6 sm:px-8 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Download Your Welcome Guide &amp; Product Training</h3>
+                        <p class="text-white/80 text-sm mt-0.5">
+                            Everything you need to understand, believe in, and share our products. Read this first!
+                        </p>
+                    </div>
+                </div>
+                <a href="https://homesafeeducation.com/affiliate-welcome-guide.docx"
+                   download
+                   class="flex-shrink-0 inline-flex items-center gap-2 bg-white text-emerald-700 font-bold text-sm px-6 py-3 rounded-lg shadow-md hover:bg-emerald-50 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Download Guide
+                </a>
+            </div>
+        </div>
+
+        <!-- =============================================================
              TRAFFIC ROW — clicks + conversion rate
              ============================================================= -->
         <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
